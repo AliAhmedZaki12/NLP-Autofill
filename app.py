@@ -1,15 +1,13 @@
-"""
-NLP Autofill — Streamlit Application
-=====================================
-Main entry point. Run with:
-    streamlit run app.py
-"""
-
 import streamlit as st
+import pandas as pd
+
 from bigram_model import BigramModel
 from corpus import get_corpus, get_corpus_stats
 
-# ── Page config ─────────────────────────────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Page Config
+# ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="NLP Autofill System",
     page_icon="🧠",
@@ -17,85 +15,81 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Custom CSS ───────────────────────────────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Custom CSS
+# ─────────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-    /* Main header */
+
+    /* Main Header */
     .main-header {
         text-align: center;
         padding: 2rem 0 1rem;
     }
+
     .main-header h1 {
-        font-size: 2.4rem;
-        font-weight: 700;
+        font-size: 2.6rem;
+        font-weight: 800;
         color: #1a1a2e;
+        margin-bottom: 0.3rem;
     }
+
     .main-header p {
         font-size: 1.1rem;
-        color: #555;
-    }
-
-    /* Suggestion cards */
-    .suggestion-card {
-        background: #f8f9ff;
-        border: 1px solid #e0e4ff;
-        border-radius: 10px;
-        padding: 0.6rem 1rem;
-        margin: 4px 0;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.2s;
-    }
-    .suggestion-card:hover {
-        background: #e8ecff;
-        border-color: #4f6ef7;
-    }
-
-    /* Stat boxes */
-    .stat-box {
-        background: #f0f4ff;
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: center;
-    }
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #4f6ef7;
-    }
-    .stat-label {
-        font-size: 0.85rem;
         color: #666;
     }
 
-    /* Bigram row */
-    .bigram-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 6px 0;
-        border-bottom: 1px solid #f0f0f0;
+    /* Suggestion Cards */
+    .suggestion-card {
+        background: #f8f9ff;
+        border: 1px solid #e0e4ff;
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        margin: 6px 0;
+        transition: all 0.25s ease;
     }
 
-    /* Hide Streamlit default footer */
-    footer {visibility: hidden;}
+    .suggestion-card:hover {
+        background: #eef2ff;
+        border-color: #4f6ef7;
+        transform: translateY(-2px);
+    }
+
+    /* Footer */
+    footer {
+        visibility: hidden;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
 
-# ── Load & cache model ───────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+# Load & Cache Model
+# ─────────────────────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_model(remove_stopwords=False):
-    """Train and cache the Bigram model (runs only once per session)."""
+    """
+    Train and cache the Bigram model.
+    Runs once unless settings change.
+    """
+
     corpus = get_corpus()
-    model = BigramModel(remove_stopwords=remove_stopwords)
+
+    model = BigramModel(
+        remove_stopwords=remove_stopwords
+    )
+
     model.train(corpus)
+
     return model
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Corpus Statistics
+# ─────────────────────────────────────────────────────────────────────────────
 corpus_stats = get_corpus_stats()
-
-
 # ── Sidebar ──────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## ⚙️ Settings")
@@ -137,7 +131,7 @@ with st.sidebar:
 # ── Main content ─────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="main-header">
-    <h1>🧠 NLP Autofill System</h1>
+    <h1> NLP Autofill System</h1>
     <p>Intelligent next-word prediction using Bigram Language Model</p>
 </div>
 """, unsafe_allow_html=True)
@@ -280,7 +274,7 @@ with tab3:
             st.code(str(tokens))
 
             st.markdown("**Step 4 — Token Count**")
-            st.success(f"✅ {len(tokens)} tokens extracted")
+            st.success(f" {len(tokens)} tokens extracted")
 
         st.markdown("**Token Visualization:**")
         token_html = " ".join(
@@ -290,81 +284,3 @@ with tab3:
             for t in tokens
         )
         st.markdown(token_html, unsafe_allow_html=True)
-
-
-# ── TAB 4: How It Works ───────────────────────────────────────────────────────
-with tab4:
-    st.subheader("How the NLP Autofill System Works")
-
-    st.markdown("""
-    ### 📌 Project Overview
-    This system builds an intelligent autofill engine using a **Bigram Language Model**,
-    which learns word-pair patterns from a text corpus and uses them to predict
-    the most likely next word as you type.
-
-    ---
-
-    ### 🔄 Pipeline
-
-    ```
-    Raw Text Corpus
-         │
-         ▼
-    Data Cleaning
-    (lowercase → remove punctuation → tokenize)
-         │
-         ▼
-    Bigram Training
-    (count all word pairs → compute probabilities)
-         │
-         ▼
-    Prediction Engine
-    (given last word → rank next words by P(w2|w1))
-         │
-         ▼
-    Streamlit UI
-    (display top suggestions to the user)
-    ```
-
-    ---
-
-    ### 🧮 The Math: Bigram Probability
-
-    For any two consecutive words **w1** and **w2**:
-
-    ```
-    P(w2 | w1) = count(w1, w2) / count(w1)
-    ```
-
-    **Example:** In the sentence *"the cat sat on the mat"*:
-    - count("the", "cat") = 1
-    - count("the", "mat") = 1
-    - count("the") = 2
-    - P("cat" | "the") = 1/2 = **0.50**
-    - P("mat" | "the") = 1/2 = **0.50**
-
-    ---
-
-    ### 🗂️ Project Structure
-
-    | File | Description |
-    |------|-------------|
-    | `app.py` | Streamlit web application (main UI) |
-    | `bigram_model.py` | Bigram model: training & prediction |
-    | `data_cleaning.py` | Text preprocessing pipeline |
-    | `corpus.py` | Training data (sentences) |
-    | `requirements.txt` | Python dependencies |
-    | `README.md` | Full project documentation |
-
-    ---
-
-    ### ▶️ How to Run
-
-    ```bash
-    # 1. Install dependencies
-    pip install -r requirements.txt
-
-    # 2. Launch the app
-    streamlit run app.py
-    ```
-    """)
