@@ -160,9 +160,7 @@ NLP_AUTOFILL_PROJECT/
 ├── data_cleaning.py
 ├── requirements.txt
 ├── README.md
-├── .gitignore
-│
-└── screenshots/
+└──
 ```
 
 ---
