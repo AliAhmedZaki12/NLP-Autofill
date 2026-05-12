@@ -75,15 +75,15 @@ def load_model(remove_stopwords=False):
     Runs once unless settings change.
     """
 
-corpus = get_corpus()
+    corpus = get_corpus()
 
-if not corpus:
-    raise ValueError("Corpus is empty.")
+    model = BigramModel(
+        remove_stopwords=remove_stopwords
+    )
 
-model = BigramModel(remove_stopwords=remove_stopwords)
-model.train(corpus)
+    model.train(corpus)
 
-return model
+    return model
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Corpus Statistics
