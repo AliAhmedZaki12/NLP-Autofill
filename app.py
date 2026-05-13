@@ -10,7 +10,6 @@ from corpus import get_corpus, get_corpus_stats
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="NLP Autofill System",
-    page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -58,23 +57,6 @@ st.markdown("""
         color: #666;
     }
 
-    /* Suggestion Cards */
-    .suggestion-card {
-        background: #f8f9ff;
-        border: 1px solid #dbe4ff;
-        border-radius: 16px;
-        padding: 1rem;
-        margin: 8px 0;
-        transition: all 0.25s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-
-    .suggestion-card:hover {
-        background: #eef2ff;
-        border-color: #4f6ef7;
-        transform: translateY(-3px);
-    }
-
     /* Better Buttons */
     .stButton > button {
         width: 100%;
@@ -89,7 +71,7 @@ st.markdown("""
         border-radius: 10px;
     }
 
-    /* Footer */
+    /* Hide Footer */
     footer {
         visibility: hidden;
     }
@@ -183,7 +165,7 @@ with st.sidebar:
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="main-header">
-    <h1>🧠 NLP Autofill System</h1>
+    <h1> NLP Autofill System</h1>
     <p>
         Intelligent next-word prediction using
         Bigram Language Model
@@ -196,9 +178,9 @@ st.markdown("""
 # Tabs
 # ─────────────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3 = st.tabs([
-    "✍️ Autofill Demo",
-    "📊 Bigram Table",
-    "🧹 Data Cleaning",
+    " Autofill Demo",
+    " Bigram Table",
+    " Data Cleaning",
 ])
 
 
@@ -216,7 +198,7 @@ with tab1:
 
     user_input = st.text_input(
         label="Your input:",
-        placeholder="e.g. the quick",
+        placeholder="e.g. machine learning",
         key="main_input",
         autocomplete="off",
     )
@@ -254,59 +236,19 @@ with tab1:
 
                     pct = round(prob * 100, 1)
 
-                    st.markdown(
-                        f"""
-                        <div class="suggestion-card">
+                    with st.container(border=True):
 
-                            <div style="
-                                font-size:18px;
-                                font-weight:700;
-                                margin-bottom:10px;
-                            ">
-                                🔵
-                                <span style="color:#1f3c88">
-                                    {last_word}
-                                </span>
+                        st.markdown(
+                            f"### 🔵 {last_word} → {word}"
+                        )
 
-                                <span style="color:#222">
-                                    {word}
-                                </span>
-                            </div>
+                        st.caption(
+                            f"Probability: {pct}%"
+                        )
 
-                            <div style="
-                                font-size:13px;
-                                color:#666;
-                                margin-bottom:8px;
-                            ">
-                                Probability: {pct}%
-                            </div>
-
-                            <div style="
-                                width:100%;
-                                height:8px;
-                                background:#dbe4ff;
-                                border-radius:999px;
-                                overflow:hidden;
-                            ">
-
-                                <div style="
-                                    width:{pct}%;
-                                    height:100%;
-                                    background:linear-gradient(
-                                        90deg,
-                                        #4f6ef7,
-                                        #7c9cff
-                                    );
-                                    border-radius:999px;
-                                ">
-                                </div>
-
-                            </div>
-
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
+                        st.progress(
+                            min(int(pct), 100)
+                        )
 
             st.divider()
 
@@ -497,25 +439,12 @@ with tab3:
 
         st.markdown("### Token Visualization")
 
-        token_html = " ".join(
-            f'''
-            <span style="
-                background:#e8ecff;
-                border:1px solid #c0caff;
-                border-radius:6px;
-                padding:4px 10px;
-                margin:3px;
-                display:inline-block;
-                font-family:monospace;
-                font-size:14px;
-            ">
-                {t}
-            </span>
-            '''
-            for t in tokens
+        token_cols = st.columns(
+            min(len(tokens), 6)
         )
 
-        st.markdown(
-            token_html,
-            unsafe_allow_html=True
-        )
+        for i, token in enumerate(tokens):
+
+            with token_cols[i % 6]:
+
+                st.code(token)
