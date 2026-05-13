@@ -61,17 +61,32 @@ st.markdown("""
     /* Suggestion Cards */
     .suggestion-card {
         background: #f8f9ff;
-        border: 1px solid #e0e4ff;
-        border-radius: 12px;
-        padding: 0.8rem 1rem;
-        margin: 6px 0;
+        border: 1px solid #dbe4ff;
+        border-radius: 16px;
+        padding: 1rem;
+        margin: 8px 0;
         transition: all 0.25s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
     .suggestion-card:hover {
         background: #eef2ff;
         border-color: #4f6ef7;
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+    }
+
+    /* Better Buttons */
+    .stButton > button {
+        width: 100%;
+        border-radius: 10px;
+        font-weight: 600;
+        border: none;
+        padding: 0.55rem;
+    }
+
+    /* Better Input */
+    .stTextInput input {
+        border-radius: 10px;
     }
 
     /* Footer */
@@ -180,11 +195,10 @@ st.markdown("""
 # ─────────────────────────────────────────────────────────────────────────────
 # Tabs
 # ─────────────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3 = st.tabs([
     "✍️ Autofill Demo",
     "📊 Bigram Table",
     "🧹 Data Cleaning",
-    "📖 How It Works",
 ])
 
 
@@ -244,26 +258,46 @@ with tab1:
                         f"""
                         <div class="suggestion-card">
 
-                            🔵 <b>{last_word}</b> {word}
+                            <div style="
+                                font-size:18px;
+                                font-weight:700;
+                                margin-bottom:10px;
+                            ">
+                                🔵
+                                <span style="color:#1f3c88">
+                                    {last_word}
+                                </span>
 
-                            <br>
-
-                            <small style="color:#888">
-                                Probability: {pct}%
-                            </small>
+                                <span style="color:#222">
+                                    {word}
+                                </span>
+                            </div>
 
                             <div style="
-                                height:4px;
-                                background:#e0e4ff;
-                                border-radius:2px;
-                                margin-top:6px;
+                                font-size:13px;
+                                color:#666;
+                                margin-bottom:8px;
+                            ">
+                                Probability: {pct}%
+                            </div>
+
+                            <div style="
+                                width:100%;
+                                height:8px;
+                                background:#dbe4ff;
+                                border-radius:999px;
+                                overflow:hidden;
                             ">
 
                                 <div style="
-                                    height:4px;
-                                    background:#4f6ef7;
-                                    border-radius:2px;
                                     width:{pct}%;
+                                    height:100%;
+                                    background:linear-gradient(
+                                        90deg,
+                                        #4f6ef7,
+                                        #7c9cff
+                                    );
+                                    border-radius:999px;
                                 ">
                                 </div>
 
@@ -447,6 +481,7 @@ with tab3:
             st.markdown(
                 "### Step 2 — Remove Punctuation & Digits"
             )
+
             st.code(step2)
 
         with col_b:
@@ -457,7 +492,7 @@ with tab3:
             st.markdown("### Step 4 — Token Count")
 
             st.success(
-                f" {len(tokens)} tokens extracted"
+                f"{len(tokens)} tokens extracted"
             )
 
         st.markdown("### Token Visualization")
@@ -468,10 +503,11 @@ with tab3:
                 background:#e8ecff;
                 border:1px solid #c0caff;
                 border-radius:6px;
-                padding:3px 10px;
+                padding:4px 10px;
                 margin:3px;
                 display:inline-block;
                 font-family:monospace;
+                font-size:14px;
             ">
                 {t}
             </span>
